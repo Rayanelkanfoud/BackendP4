@@ -9,6 +9,14 @@ use Illuminate\View\View;
 
 class PraktijkmanagementController extends Controller
 {
+    private const ROLES = [
+        'tandarts',
+        'mondhygienist',
+        'assistent',
+        'praktijkmanagement',
+        'patient',
+    ];
+
     /**
      * Display a listing of the resource.
      */
@@ -17,6 +25,7 @@ class PraktijkmanagementController extends Controller
         return view('Praktijkmanagement.index', [
             'title' => 'Praktijkmanagement Home',
             'users' => User::orderBy('name')->get(),
+            'roles' => self::ROLES,
         ]);
     }
 
@@ -58,6 +67,27 @@ class PraktijkmanagementController extends Controller
     public function update(Request $request, string $id)
     {
         //
+    }
+
+    public function updateRole(Request $request, User $user): RedirectResponse
+    {
+        if (auth()->id() === $user->id) {
+            return redirect()
+                ->route('praktijkmanagement.index')
+                ->with('status', 'Je kunt je eigen rol hier niet wijzigen.');
+        }
+
+        $validated = $request->validate([
+            'rolename' => ['required', 'string', 'in:'.implode(',', self::ROLES)],
+        ]);
+
+        $user->update([
+            'rolename' => $validated['rolename'],
+        ]);
+
+        return redirect()
+            ->route('praktijkmanagement.index')
+            ->with('status', 'Gebruikersrol gewijzigd.');
     }
 
     /**

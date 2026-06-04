@@ -42,7 +42,7 @@
 
                     @if (Auth::check() && Auth::user()->rolename === 'praktijkmanagement')
                         <x-nav-link :href="route('praktijkmanagement.index')" :active="request()->routeIs('praktijkmanagement.index')">
-                            {{ __('Praktijkmanagement') }}
+                            {{ __('Gebruikersrollen') }}
                         </x-nav-link>
                     @endif
                 </div>
@@ -127,7 +127,7 @@
 
             @if (Auth::check() && Auth::user()->rolename === 'praktijkmanagement')
                 <x-responsive-nav-link :href="route('praktijkmanagement.index')" :active="request()->routeIs('praktijkmanagement.index')">
-                    {{ __('Praktijkmanagement') }}
+                    {{ __('Gebruikersrollen') }}
                 </x-responsive-nav-link>
             @endif
         </div>

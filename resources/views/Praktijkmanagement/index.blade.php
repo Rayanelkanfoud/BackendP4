@@ -22,7 +22,7 @@
                     @endif
 
                     <h3 class="text-lg font-medium text-gray-900">
-                        Gebruikers
+                        Gebruikersrollen
                     </h3>
 
                     <div class="mt-4 overflow-x-auto">
@@ -31,8 +31,8 @@
                                 <tr>
                                     <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Naam</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Email</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Rol</th>
-                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actie</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Rol wijzigen</th>
+                                    <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Verwijderen</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
@@ -40,7 +40,28 @@
                                     <tr>
                                         <td class="px-4 py-3 text-sm text-gray-900">{{ $user->name }}</td>
                                         <td class="px-4 py-3 text-sm text-gray-600">{{ $user->email }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-600">{{ $user->rolename }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">
+                                            @if (auth()->id() !== $user->id)
+                                                <form method="POST" action="{{ route('praktijkmanagement.users.role', $user) }}" class="flex items-center gap-2">
+                                                    @csrf
+                                                    @method('PATCH')
+
+                                                    <select name="rolename" class="rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                        @foreach ($roles as $role)
+                                                            <option value="{{ $role }}" @selected($user->rolename === $role)>
+                                                                {{ $role }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+
+                                                    <button type="submit" class="rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-700">
+                                                        Wijzigen
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <span class="text-sm text-gray-400">Eigen rol via eigen menu</span>
+                                            @endif
+                                        </td>
                                         <td class="px-4 py-3 text-right text-sm">
                                             @if (auth()->id() !== $user->id)
                                                 <form method="POST" action="{{ route('praktijkmanagement.users.destroy', $user) }}">
