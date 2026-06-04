@@ -36,6 +36,10 @@ Route::get('/praktijkmanagement', [PraktijkmanagementController::class, 'index']
     ->name('praktijkmanagement.index')
     ->middleware(['auth', 'role:praktijkmanagement']);
 
+Route::delete('/praktijkmanagement/users/{user}', [PraktijkmanagementController::class, 'destroy'])
+    ->name('praktijkmanagement.users.destroy')
+    ->middleware(['auth', 'role:praktijkmanagement']);
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

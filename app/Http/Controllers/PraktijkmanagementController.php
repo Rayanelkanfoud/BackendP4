@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
 class PraktijkmanagementController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
         return view('Praktijkmanagement.index', [
             'title' => 'Praktijkmanagement Home',
+            'users' => User::orderBy('name')->get(),
         ]);
     }
 
@@ -57,8 +63,18 @@ class PraktijkmanagementController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user): RedirectResponse
     {
-        //
+        if (auth()->id() === $user->id) {
+            return redirect()
+                ->route('praktijkmanagement.index')
+                ->with('status', 'Je kunt je eigen account niet verwijderen.');
+        }
+
+        $user->delete();
+
+        return redirect()
+            ->route('praktijkmanagement.index')
+            ->with('status', 'Gebruiker verwijderd.');
     }
 }
