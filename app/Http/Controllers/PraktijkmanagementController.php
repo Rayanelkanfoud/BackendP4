@@ -24,7 +24,7 @@ class PraktijkmanagementController extends Controller
     {
         return view('Praktijkmanagement.index', [
             'title' => 'Praktijkmanagement Home',
-            'users' => User::orderBy('name')->get(),
+            'users' => User::spGetAllUsers(),
             'roles' => self::ROLES,
         ]);
     }
@@ -56,17 +56,29 @@ class PraktijkmanagementController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user): View
     {
-        //
+        abort_if(auth()->id() === $user->id, 403, 'Je kunt je eigen rol hier niet wijzigen.');
+
+        $selectedUser = User::spGetUserById($user->id);
+
+        abort_if($selectedUser === null, 404);
+
+        return view('Praktijkmanagement.edit', [
+            'title' => 'Gebruikersrol wijzigen',
+            'user' => $selectedUser,
+            'roles' => User::spGetAllUserroles(),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): RedirectResponse
     {
-        //
+        $user = User::findOrFail($id);
+
+        return $this->updateRole($request, $user);
     }
 
     public function updateRole(Request $request, User $user): RedirectResponse
@@ -81,9 +93,7 @@ class PraktijkmanagementController extends Controller
             'rolename' => ['required', 'string', 'in:'.implode(',', self::ROLES)],
         ]);
 
-        $user->update([
-            'rolename' => $validated['rolename'],
-        ]);
+        User::spUpdateUserRole($user->id, $validated['rolename']);
 
         return redirect()
             ->route('praktijkmanagement.index')
@@ -101,7 +111,7 @@ class PraktijkmanagementController extends Controller
                 ->with('status', 'Je kunt je eigen account niet verwijderen.');
         }
 
-        $user->delete();
+        User::spDeleteUser($user->id);
 
         return redirect()
             ->route('praktijkmanagement.index')

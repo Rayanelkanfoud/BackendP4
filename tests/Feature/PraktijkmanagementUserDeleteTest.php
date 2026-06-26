@@ -33,6 +33,28 @@ class PraktijkmanagementUserDeleteTest extends TestCase
         ]);
     }
 
+    public function test_praktijkmanagement_can_open_user_role_edit_form(): void
+    {
+        $praktijkmanagement = User::factory()->create([
+            'rolename' => 'praktijkmanagement',
+        ]);
+
+        $patient = User::factory()->create([
+            'rolename' => 'patient',
+        ]);
+
+        $response = $this
+            ->actingAs($praktijkmanagement)
+            ->post(route('praktijkmanagement.users.edit', $patient), [
+                '_method' => 'GET',
+            ]);
+
+        $response->assertOk();
+        $response->assertSee($patient->name);
+        $response->assertSee('patient');
+        $response->assertSee('assistent');
+    }
+
     public function test_praktijkmanagement_cannot_update_own_role_from_users_table(): void
     {
         $praktijkmanagement = User::factory()->create([

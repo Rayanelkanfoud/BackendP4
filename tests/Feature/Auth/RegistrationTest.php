@@ -14,19 +14,39 @@ class RegistrationTest extends TestCase
         $response = $this->get('/register');
 
         $response->assertStatus(200);
+        $response->assertDontSee('rolename');
     }
 
-    public function test_new_users_can_register(): void
+    public function test_new_users_register_as_patient_by_default(): void
     {
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
-            'rolename' => 'patient',
         ]);
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertDatabaseHas('users', [
+            'email' => 'test@example.com',
+            'rolename' => 'patient',
+        ]);
+    }
+
+    public function test_registration_ignores_submitted_role(): void
+    {
+        $this->post('/register', [
+            'name' => 'Role User',
+            'email' => 'role@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'rolename' => 'praktijkmanagement',
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'role@example.com',
+            'rolename' => 'patient',
+        ]);
     }
 }

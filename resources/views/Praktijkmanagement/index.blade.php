@@ -42,17 +42,9 @@
                                         <td class="px-4 py-3 text-sm text-gray-600">{{ $user->email }}</td>
                                         <td class="px-4 py-3 text-sm text-gray-600">
                                             @if (auth()->id() !== $user->id)
-                                                <form method="POST" action="{{ route('praktijkmanagement.users.role', $user) }}" class="flex items-center gap-2">
+                                                <form method="POST" action="{{ route('praktijkmanagement.users.edit', $user) }}">
                                                     @csrf
-                                                    @method('PATCH')
-
-                                                    <select name="rolename" class="rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                                        @foreach ($roles as $role)
-                                                            <option value="{{ $role }}" @selected($user->rolename === $role)>
-                                                                {{ $role }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                    @method('GET')
 
                                                     <button type="submit" class="rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-700">
                                                         Wijzigen

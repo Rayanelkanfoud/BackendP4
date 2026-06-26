@@ -44,6 +44,10 @@
                         <x-nav-link :href="route('praktijkmanagement.index')" :active="request()->routeIs('praktijkmanagement.index')">
                             {{ __('Gebruikersrollen') }}
                         </x-nav-link>
+
+                        <x-nav-link :href="route('allergenen.index')" :active="request()->routeIs('allergenen.*')">
+                            {{ __('Allergenen') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -128,6 +132,10 @@
             @if (Auth::check() && Auth::user()->rolename === 'praktijkmanagement')
                 <x-responsive-nav-link :href="route('praktijkmanagement.index')" :active="request()->routeIs('praktijkmanagement.index')">
                     {{ __('Gebruikersrollen') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('allergenen.index')" :active="request()->routeIs('allergenen.*')">
+                    {{ __('Allergenen') }}
                 </x-responsive-nav-link>
             @endif
         </div>
